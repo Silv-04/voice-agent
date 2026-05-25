@@ -3,6 +3,11 @@ const INSTRUCTIONS = {
   en: 'You are a helpful general assistant. Respond clearly and concisely in English.',
 };
 
+const VOICES = {
+  mt: 'mt-MT-GraceNeural',
+  en: 'en-US-AlloyTurboMultilingualNeural',
+};
+
 export function buildSessionConfig() {
   const lang = process.env.AGENT_LANGUAGE || 'mt';
 
@@ -10,6 +15,7 @@ export function buildSessionConfig() {
     type: 'session.update',
     session: {
       instructions: INSTRUCTIONS[lang] ?? INSTRUCTIONS.mt,
+      voice: VOICES[lang] ?? VOICES.mt,
       input_audio_format: 'pcm16',
       output_audio_format: 'pcm16',
       input_audio_transcription: {
