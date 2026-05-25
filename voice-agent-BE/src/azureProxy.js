@@ -58,6 +58,10 @@ export function createAzureProxy(frontendWs) {
       return;
     }
 
+    if (event.type === 'error') {
+      console.error('Azure error event:', JSON.stringify(event));
+    }
+
     if (event.type === 'response.audio.delta' && event.delta) {
       const audioBuffer = Buffer.from(event.delta, 'base64');
       frontendWs.send(audioBuffer, { binary: true });
@@ -69,7 +73,7 @@ export function createAzureProxy(frontendWs) {
 
   /** Closes the frontend connection when Azure closes its side. */
   azureWs.on('close', (code, reason) => {
-    console.log(`Azure WS closed: ${code}`);
+    console.log(`Azure WS closed: ${code} - ${reason.toString()}`);
     if (frontendWs.readyState === WebSocket.OPEN) {
       frontendWs.close(1000, reason);
     }
