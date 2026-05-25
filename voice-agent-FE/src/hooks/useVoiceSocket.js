@@ -4,7 +4,7 @@ export function useVoiceSocket({ onAudioChunk, onEvent }) {
   const wsRef = useRef(null);
 
   const connect = useCallback(() => {
-    const url = import.meta.env.VITE_BACKEND_WS_URL;
+    const url = import.meta.env.VITE_BACKEND_WS_URL ?? 'wss://voice-agent-be-production.up.railway.app';
     const ws = new WebSocket(url);
     ws.binaryType = 'arraybuffer';
 

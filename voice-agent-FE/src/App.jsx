@@ -27,7 +27,7 @@ export default function App() {
   const isActiveRef = useRef(false);
 
   useEffect(() => {
-    const wsUrl = import.meta.env.VITE_BACKEND_WS_URL;
+    const wsUrl = import.meta.env.VITE_BACKEND_WS_URL ?? 'wss://voice-agent-be-production.up.railway.app';
     const httpUrl = wsUrl.replace(/^ws(s?):\/\//, 'http$1://');
     fetch(`${httpUrl}/health`)
       .then((r) => r.ok ? setBackendReachable(true) : setBackendReachable(false))
