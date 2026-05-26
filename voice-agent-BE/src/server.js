@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import { createServer } from 'http';
-import { WebSocketServer } from 'ws';
-import { createSpeechPipeline } from './speechPipeline.js';
+import { WebSocketServer, WebSocket } from 'ws';
+import { createAzureProxy } from './azureProxy.js';
 
 const app = express();
 const server = createServer(app);
@@ -21,10 +21,18 @@ wss.on('connection', (ws, req) => {
   const clientIp = req.socket.remoteAddress;
   console.log(`Frontend connected from ${clientIp}`);
 
-  createSpeechPipeline(ws);
+  const azureWs = createAzureProxy(ws);
 
-  ws.on('close', () => console.log(`Frontend disconnected from ${clientIp}`));
-  ws.on('error', (err) => console.error(`Frontend WS error (${clientIp}):`, err.message));
+  ws.on('close', () => {
+    console.log(`Frontend disconnected from ${clientIp}`);
+  });
+
+  ws.on('error', (err) => {
+    console.error(`Frontend WS error (${clientIp}):`, err.message);
+    if (azureWs.readyState === WebSocket.OPEN) {
+      azureWs.close();
+    }
+  });
 });
 
 const port = process.env.PORT || 8080;

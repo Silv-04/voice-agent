@@ -14,9 +14,9 @@ export function buildSessionConfig() {
         language: 'mt-mt',
       },
       turn_detection: {
-        type: 'server_vad',
+        type: 'azure_semantic_vad',
         threshold: 0.5,
-        prefix_padding_ms: 300,
+        prefix_padding_ms: 420,
         silence_duration_ms: 500,
       },
       input_audio_echo_cancellation: { type: 'server_echo_cancellation' },
