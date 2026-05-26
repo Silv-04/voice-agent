@@ -1,15 +1,17 @@
 const INSTRUCTIONS = 'Inti assistenti ta\' għajnuna li jitkellem bil-Malti. Wieġeb dejjem bil-Malti, b\'mod ċar u korteos.';
+const VOICE = { name: 'mt-MT-GraceNeural', type: 'azure-standard', temperature: 0, rate: '1' };
 
 export function buildSessionConfig() {
   return {
     type: 'session.update',
     session: {
       instructions: INSTRUCTIONS,
+      voice: VOICE,
       input_audio_format: 'pcm16',
       output_audio_format: 'pcm16',
       input_audio_transcription: {
-        model: 'whisper-1',
-        language: 'mt',
+        model: 'azure-speech',
+        language: 'mt-mt',
       },
       turn_detection: {
         type: 'server_vad',
