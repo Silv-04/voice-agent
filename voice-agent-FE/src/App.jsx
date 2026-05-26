@@ -54,7 +54,7 @@ export default function App() {
     });
   }, []);
 
-  const { init: initPlayer, playChunk, stop: stopPlayer, flush: flushPlayer } = useAudioPlayer();
+  const { init: initPlayer, playChunk, stop: stopPlayer, interrupt: interruptPlayer } = useAudioPlayer();
 
   const handleAudioChunk = useCallback((buffer) => {
     playChunk(buffer);
@@ -77,7 +77,6 @@ export default function App() {
 
       case 'input_audio_buffer.speech_started':
         setStatus(STATUS.LISTENING);
-        flushPlayer();
         break;
 
       case 'response.audio_transcript.delta':
@@ -95,6 +94,7 @@ export default function App() {
         break;
 
       case 'response.created':
+        interruptPlayer();
         setStatus(STATUS.SPEAKING);
         break;
 
@@ -104,7 +104,7 @@ export default function App() {
         }
         break;
     }
-  }, [addTranscriptEntry, updatePartialTranscript, flushPlayer]);
+  }, [addTranscriptEntry, updatePartialTranscript, interruptPlayer]);
 
   const { connect, disconnect, sendAudio } = useVoiceSocket({
     onAudioChunk: handleAudioChunk,

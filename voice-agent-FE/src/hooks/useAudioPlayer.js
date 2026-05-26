@@ -5,10 +5,12 @@ const SAMPLE_RATE = 24000;
 export function useAudioPlayer() {
   const contextRef = useRef(null);
   const nextStartTimeRef = useRef(0);
+  const activeSourcesRef = useRef([]);
 
   const init = useCallback(() => {
     contextRef.current = new AudioContext({ sampleRate: SAMPLE_RATE });
     nextStartTimeRef.current = 0;
+    activeSourcesRef.current = [];
   }, []);
 
   const playChunk = useCallback((arrayBuffer) => {
@@ -32,17 +34,28 @@ export function useAudioPlayer() {
     const startAt = Math.max(now, nextStartTimeRef.current);
     source.start(startAt);
     nextStartTimeRef.current = startAt + audioBuffer.duration;
+
+    activeSourcesRef.current.push(source);
+    source.onended = () => {
+      activeSourcesRef.current = activeSourcesRef.current.filter((s) => s !== source);
+    };
   }, []);
 
   const stop = useCallback(() => {
     contextRef.current?.close();
     contextRef.current = null;
     nextStartTimeRef.current = 0;
+    activeSourcesRef.current = [];
   }, []);
 
-  const flush = useCallback(() => {
+  /** Immediately stops all playing audio chunks (barge-in / interruption). */
+  const interrupt = useCallback(() => {
+    activeSourcesRef.current.forEach((source) => {
+      try { source.stop(); } catch { /* already stopped */ }
+    });
+    activeSourcesRef.current = [];
     nextStartTimeRef.current = 0;
   }, []);
 
-  return { init, playChunk, stop, flush };
+  return { init, playChunk, stop, interrupt };
 }
