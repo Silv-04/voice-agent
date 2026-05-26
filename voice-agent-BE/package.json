@@ -9,6 +9,8 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "microsoft-cognitiveservices-speech-sdk": "^1.50.0",
+    "openai": "^6.39.0",
     "ws": "^8.17.1"
   }
 }
