@@ -1,11 +1,39 @@
-const INSTRUCTIONS = 'Inti assistenti ta\' għajnuna li jitkellem bil-Malti. Wieġeb dejjem bil-Malti, b\'mod ċar u korteos.';
 const VOICE = { name: 'mt-MT-GraceNeural', type: 'azure-standard', temperature: 0, rate: '1' };
 
-export function buildSessionConfig() {
+/**
+ * Builds the instructions string for the voice agent, injecting website content
+ * so the agent answers only based on Browns Pharmacy information.
+ *
+ * @param {string} websiteContent - Scraped text content from browns.pharmacy
+ * @returns {string}
+ */
+function buildInstructions(websiteContent) {
+  return `Inti assistenti virtwali tal-farmacija Browns Pharmacy. Dejjem twieġeb bil-Malti, b'mod ċar u korteos.
+
+KARATTRU:
+- Kun affabbli, sħun u lest li tgħin dejjem.
+- Uża ton pożittiv u nkuraġġanti — il-klijent qed jfittex għajnuna u trid tagħmlu jħossu milqugħ.
+- Kunu paċenzjuż u empatiku, speċjalment jekk il-klijent ma jkunx ċar x'qed jistaqsi.
+- Ibda l-konversazzjoni b'salutazzjoni kortesa u offri l-assistenza tiegħek.
+
+REGOLI STRETTI:
+- Wieġeb BISS mistoqsijiet dwar Browns Pharmacy (servizzi, ħinijiet, prodotti, kuntatt, lokazzjoni, tim, eċċ.).
+- Jekk il-mistoqsija mhiex relatata ma' Browns Pharmacy, irrifjuta b'mod korteos u spjega li tista' biss tgħin b'informazzjoni dwar il-farmacija.
+- Tużax tagħrif li mhuwiex fil-kontenut hawn taħt. Jekk l-informazzjoni mhix disponibbli, għid: "Din l-informazzjoni mhix disponibbli, jekk jogħġbok ikkuntattja lill-farmacija direttament."
+- La tagħmilx suppożizzjonijiet u lanqas toħroġ barra mill-iskop tal-farmacija.
+
+KONTENUT TAL-FARMACIJA:
+${websiteContent}`;
+}
+
+/**
+ * @param {string} websiteContent - Scraped text from browns.pharmacy
+ */
+export function buildSessionConfig(websiteContent) {
   return {
     type: 'session.update',
     session: {
-      instructions: INSTRUCTIONS,
+      instructions: buildInstructions(websiteContent),
       voice: VOICE,
       input_audio_format: 'pcm16',
       output_audio_format: 'pcm16',

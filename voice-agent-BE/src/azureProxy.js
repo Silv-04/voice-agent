@@ -12,9 +12,10 @@ import { buildSessionConfig } from './sessionConfig.js';
  * `input_audio_buffer.append` event before being sent to Azure.
  *
  * @param {import('ws').WebSocket} frontendWs - The WebSocket connection from the browser client.
+ * @param {string} websiteContent - Scraped text from browns.pharmacy to inject into session instructions.
  * @returns {import('ws').WebSocket} The Azure WebSocket connection.
  */
-export function createAzureProxy(frontendWs) {
+export function createAzureProxy(frontendWs, websiteContent) {
   const endpoint = process.env.AZURE_VOICELIVE_ENDPOINT;
   const apiKey = process.env.AZURE_VOICELIVE_API_KEY;
   const model = process.env.AZURE_VOICELIVE_MODEL;
@@ -33,7 +34,7 @@ export function createAzureProxy(frontendWs) {
   /** Sends the session configuration to Azure as soon as the connection is established. */
   azureWs.on('open', () => {
     console.log('Connected to Azure Voice Live API');
-    azureWs.send(JSON.stringify(buildSessionConfig()));
+    azureWs.send(JSON.stringify(buildSessionConfig(websiteContent)));
   });
 
   /**
